@@ -1,4 +1,4 @@
-const pool = require('../config/connection');
+const pool = require('../controllers/connection');
 
 const getEmployees = () => {
   return pool.query(`

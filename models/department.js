@@ -1,4 +1,4 @@
-const pool = require('../config/connection');
+const pool = require('../controllers/connection');  // Updated path
 
 const getDepartments = () => {
   return pool.query('SELECT * FROM department');

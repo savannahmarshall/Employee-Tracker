@@ -1,4 +1,4 @@
-const pool = require('../config/connection');
+const pool = require('../controllers/connection');
 
 const getRoles = () => {
   return pool.query('SELECT role.id, role.title, role.salary, department.name AS department FROM role JOIN department ON role.department_id = department.id');
