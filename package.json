@@ -4,7 +4,8 @@
   "description": "## Description This application functions as an employee tracker that can be used to view and plan departments, roles and employees. This application is useful because it allows the user to organize and plan their business.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "seed": "psql -U postgres -d employee_db -f db/seeds.sql"
   },
   "keywords": [],
   "author": "",

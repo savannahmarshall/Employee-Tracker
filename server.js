@@ -1,6 +1,7 @@
 const express = require('express');
+const routes = require('./routes');
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 
 const departmentRoutes = require('./routes/api/departmentRoutes');
 const roleRoutes = require('./routes/api/roleRoutes');
@@ -18,6 +19,8 @@ app.get('/', (req, res) => {
 app.use('/api/departments', departmentRoutes);
 app.use('/api/roles', roleRoutes);
 app.use('/api/employees', employeeRoutes);
+
+app.use('/api', routes);
 
 // Start the server
 app.listen(PORT, () => {
