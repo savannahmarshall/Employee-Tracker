@@ -39,24 +39,24 @@ const startPrompt = async () => {
         });
         console.log(departmentTable.toString());
         break;
- 
+
       case 'View all roles':
         const roles = await viewAllRoles();
         const roleTable = new Table({
-          head: ['ID', 'Title', 'Salary', 'Department ID'],
-          colWidths: [5, 30, 15, 15]
+          head: ['ID', 'Title', 'Salary', 'Department'],
+          colWidths: [5, 30, 15, 30] // Adjust the widths as needed
         });
         roles.forEach(role => {
-          roleTable.push([role.id, role.title, parseFloat(role.salary).toFixed(2), role.department_id]);
+          roleTable.push([role.id, role.title, parseFloat(role.salary).toFixed(2), role.department]); // Exclude department_id
         });
         console.log(roleTable.toString());
         break;
-     
+
       case 'View all employees':
         const employees = await viewAllEmployees();
         const employeeTable = new Table({
           head: ['ID', 'First Name', 'Last Name', 'Title', 'Department', 'Salary', 'Manager'],
-          colWidths: [6, 15, 15, 30, 15, 10, 20]
+          colWidths: [6, 15, 15, 30, 20, 10, 20]
         });
         employees.forEach(employee => {
           employeeTable.push([
@@ -81,12 +81,7 @@ const startPrompt = async () => {
         break;
 
       case 'Add a role':
-        const { roleTitle, roleSalary, departmentId } = await inquirer.prompt([
-          { type: 'input', name: 'roleTitle', message: 'Enter the role title:' },
-          { type: 'input', name: 'roleSalary', message: 'Enter the role salary:' },
-          { type: 'input', name: 'departmentId', message: 'Enter the department ID for this role:' }
-        ]);
-        await addRole(roleTitle, roleSalary, departmentId);
+        await addRole();
         console.log('Role added.');
         break;
 
@@ -97,10 +92,9 @@ const startPrompt = async () => {
           { type: 'input', name: 'roleId', message: 'Enter the role ID for this employee:' },
           { type: 'input', name: 'managerId', message: 'Enter the manager ID for this employee (leave blank if none):', default: null }
         ]);
-     
-        // Convert managerId to null if it is blank
+        
         const finalManagerId = managerId === '' ? null : managerId;
-     
+        
         await addEmployee(firstName, lastName, roleId, finalManagerId);
         console.log('Employee added.');
         break;
