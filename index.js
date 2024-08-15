@@ -1,4 +1,5 @@
 const inquirer = require('inquirer');
+const Table = require('cli-table3');
 const { viewAllDepartments, viewAllRoles, viewAllEmployees, addDepartment, addRole, addEmployee, updateEmployeeRole } = require('./src/queries');
 const displayBanner = require('./src/displayBanner');
 
@@ -29,19 +30,48 @@ const startPrompt = async () => {
     switch (answers.action) {
       case 'View all departments':
         const departments = await viewAllDepartments();
-        console.log(departments);  // Debugging line
-        console.table(departments);
+        const departmentTable = new Table({
+          head: ['ID', 'Name'],
+          colWidths: [6, 20]
+        });
+        departments.forEach(department => {
+          departmentTable.push([department.id, department.name]);
+        });
+        console.log(departmentTable.toString());
         break;
+ 
       case 'View all roles':
         const roles = await viewAllRoles();
-        console.log(roles);  // Debugging line
-        console.table(roles);
+        const roleTable = new Table({
+          head: ['ID', 'Title', 'Salary', 'Department ID'],
+          colWidths: [5, 30, 15, 15]
+        });
+        roles.forEach(role => {
+          roleTable.push([role.id, role.title, parseFloat(role.salary).toFixed(2), role.department_id]);
+        });
+        console.log(roleTable.toString());
         break;
+     
       case 'View all employees':
         const employees = await viewAllEmployees();
-        console.log(employees);  // Debugging line
-        console.table(employees);
+        const employeeTable = new Table({
+          head: ['ID', 'First Name', 'Last Name', 'Title', 'Department', 'Salary', 'Manager'],
+          colWidths: [6, 15, 15, 30, 15, 10, 20]
+        });
+        employees.forEach(employee => {
+          employeeTable.push([
+            employee.id,
+            employee.first_name,
+            employee.last_name,
+            employee.role,
+            employee.department,
+            employee.salary ? parseFloat(employee.salary).toFixed(2) : 'N/A',
+            employee.manager || 'N/A'
+          ]);
+        });
+        console.log(employeeTable.toString());
         break;
+
       case 'Add a department':
         const { departmentName } = await inquirer.prompt([
           { type: 'input', name: 'departmentName', message: 'Enter the department name:' }
@@ -49,6 +79,7 @@ const startPrompt = async () => {
         await addDepartment(departmentName);
         console.log('Department added.');
         break;
+
       case 'Add a role':
         const { roleTitle, roleSalary, departmentId } = await inquirer.prompt([
           { type: 'input', name: 'roleTitle', message: 'Enter the role title:' },
@@ -58,6 +89,7 @@ const startPrompt = async () => {
         await addRole(roleTitle, roleSalary, departmentId);
         console.log('Role added.');
         break;
+
       case 'Add an employee':
         const { firstName, lastName, roleId, managerId } = await inquirer.prompt([
           { type: 'input', name: 'firstName', message: 'Enter the employee’s first name:' },
@@ -65,9 +97,14 @@ const startPrompt = async () => {
           { type: 'input', name: 'roleId', message: 'Enter the role ID for this employee:' },
           { type: 'input', name: 'managerId', message: 'Enter the manager ID for this employee (leave blank if none):', default: null }
         ]);
-        await addEmployee(firstName, lastName, roleId, managerId || null);
+     
+        // Convert managerId to null if it is blank
+        const finalManagerId = managerId === '' ? null : managerId;
+     
+        await addEmployee(firstName, lastName, roleId, finalManagerId);
         console.log('Employee added.');
         break;
+
       case 'Update an employee role':
         const { employeeId, newRoleId } = await inquirer.prompt([
           { type: 'input', name: 'employeeId', message: 'Enter the ID of the employee to update:' },
@@ -76,6 +113,7 @@ const startPrompt = async () => {
         await updateEmployeeRole(employeeId, newRoleId);
         console.log('Employee role updated.');
         break;
+
       case 'Exit':
         console.log('Exiting...');
         continueApp = false;
