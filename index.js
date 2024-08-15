@@ -3,9 +3,8 @@ const Table = require('cli-table3');
 const { viewAllDepartments, viewAllRoles, viewAllEmployees, addDepartment, addRole, addEmployee, updateEmployeeRole } = require('./src/queries');
 const displayBanner = require('./src/displayBanner');
 
-displayBanner();
-
 const startPrompt = async () => {
+  displayBanner(); // Call displayBanner only once at the start
   let continueApp = true;
 
   while (continueApp) {
@@ -69,6 +68,7 @@ const startPrompt = async () => {
             employee.manager || 'N/A'
           ]);
         });
+        console.log("\n"); // Ensure there is a newline before the table to separate from the prompt
         console.log(employeeTable.toString());
         break;
 
@@ -86,25 +86,62 @@ const startPrompt = async () => {
         break;
 
       case 'Add an employee':
+        const rolesList = await viewAllRoles();
+        const employeesList = await viewAllEmployees();
+
         const { firstName, lastName, roleId, managerId } = await inquirer.prompt([
           { type: 'input', name: 'firstName', message: 'Enter the employee’s first name:' },
           { type: 'input', name: 'lastName', message: 'Enter the employee’s last name:' },
-          { type: 'input', name: 'roleId', message: 'Enter the role ID for this employee:' },
-          { type: 'input', name: 'managerId', message: 'Enter the manager ID for this employee (leave blank if none):', default: null }
+          {
+            type: 'list',
+            name: 'roleId',
+            message: 'Select the role for this employee:',
+            choices: rolesList.map(role => ({ name: role.title, value: role.id }))
+          },
+          {
+            type: 'list',
+            name: 'managerId',
+            message: 'Select the manager for this employee (select None if there is no manager):',
+            choices: [
+              { name: 'None', value: null },
+              ...employeesList.map(employee => ({
+                name: `${employee.first_name} ${employee.last_name}`,
+                value: employee.id
+              }))
+            ]
+          }
         ]);
-        
-        const finalManagerId = managerId === '' ? null : managerId;
-        
-        await addEmployee(firstName, lastName, roleId, finalManagerId);
+
+        await addEmployee(firstName, lastName, roleId, managerId);
         console.log('Employee added.');
         break;
 
       case 'Update an employee role':
-        const { employeeId, newRoleId } = await inquirer.prompt([
-          { type: 'input', name: 'employeeId', message: 'Enter the ID of the employee to update:' },
-          { type: 'input', name: 'newRoleId', message: 'Enter the new role ID for this employee:' }
+        const employeesForUpdate = await viewAllEmployees();
+        const rolesForUpdate = await viewAllRoles();
+
+        const { employeeIdForUpdate, newRoleIdForUpdate } = await inquirer.prompt([
+          {
+            type: 'list',
+            name: 'employeeIdForUpdate',
+            message: 'Select the employee whose role you want to update:',
+            choices: employeesForUpdate.map(employee => ({
+              name: `${employee.first_name} ${employee.last_name}`,
+              value: employee.id
+            }))
+          },
+          {
+            type: 'list',
+            name: 'newRoleIdForUpdate',
+            message: 'Select the new role for this employee:',
+            choices: rolesForUpdate.map(role => ({
+              name: role.title,
+              value: role.id
+            }))
+          }
         ]);
-        await updateEmployeeRole(employeeId, newRoleId);
+
+        await updateEmployeeRole(employeeIdForUpdate, newRoleIdForUpdate);
         console.log('Employee role updated.');
         break;
 
