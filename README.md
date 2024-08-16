@@ -32,13 +32,14 @@ To use this application, follow these steps:
 3. **Run the Application:** Initialize the command-line application by typing:
    * node index.js
 5. **Selection Options:**
-   * View all departments: Select view all departments to see a table with a list of all existing departments with a unique ID for each one.
-   * View all roles: Select view all roles to see a table with a list that sorts data by id, job title, salary and department.
-   * View all roles: Select view all roles to see a table that sorts data by id, employee first and last name, job title, department, salary and manager if applicable.
-   * Add a department: If the user selects add a department, they will be prompted to enter the department name. They can view this new department by selecting view all departments.
-   * Add a role: If the user selects add a role, they will be prompoted to enter the role title, salary and select a department from a drop down list of saved departments. They can view this new role by selecting view all roles.
-   * Add an employee: If the user selects add an employee, they will be prompted to enter the employees first name, last name, select a role from a down down list of saved roles and select a manager from the list of saved employees.
-   * Update and employee role: If the user wants to update an employee role, they will be prompted to select the employe whose role they wish to update and select the new role for that employee from the list of saved roles.
+   * **View all departments:** Select view all departments to see a table with a list of all existing departments with a unique ID for each one.
+   * **View all roles:** Select view all roles to see a table with a list that sorts data by id, job title, salary and department.
+   * **View all roles:** Select view all roles to see a table that sorts data by id, employee first and last name, job title, department, salary and manager if applicable.
+   * **Add a department:** If the user selects add a department, they will be prompted to enter the department name. They can view this new department by selecting view all departments.
+   * **Add a role:** If the user selects add a role, they will be prompoted to enter the role title, salary and select a department from a drop down list of saved departments. They can view this new role by selecting view all roles.
+   * **Add an employee:** If the user selects add an employee, they will be prompted to enter the employees first name, last name, select a role from a down down list of saved roles and select a manager from the list of saved employees.
+   * **Update an employee role:** If the user wants to update an employee role, they will be prompted to select the employe whose role they wish to update and select the new role for that employee from the list of saved roles.
+     
 **Please click [here]() to view a demo on how to use this application.**
 
 
