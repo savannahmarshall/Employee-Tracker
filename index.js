@@ -3,15 +3,17 @@ const Table = require('cli-table3');
 const { viewAllDepartments, viewAllRoles, viewAllEmployees, addDepartment, addRole, addEmployee, updateEmployeeRole } = require('./src/queries');
 const displayBanner = require('./src/displayBanner');
 
-// Function to clear the console
+// Function to clear the console using ANSI escape code
 const clearConsole = () => {
-  process.stdout.write('\x1Bc'); // ANSI escape code to clear the console
+  process.stdout.write('\x1Bc');
 };
 
+// Function to start the main prompt loop
 const startPrompt = async () => {
-  displayBanner(); // Call displayBanner only once at the start
-  let continueApp = true;
+  displayBanner(); // Display the application banner at the start
+  let continueApp = true; // Variable to control the loop
 
+  // Main loop that continues until the user chooses to exit
   while (continueApp) {
     const answers = await inquirer.prompt([
       {
@@ -31,38 +33,39 @@ const startPrompt = async () => {
       }
     ]);
 
+    // Handle user selections based on their choice
     switch (answers.action) {
       case 'View all departments':
-        const departments = await viewAllDepartments();
+        const departments = await viewAllDepartments(); // Fetch all departments from the database
         const departmentTable = new Table({
           head: ['ID', 'Name'],
-          colWidths: [6, 20]
+          colWidths: [6, 20] // Define column widths
         });
         departments.forEach(department => {
-          departmentTable.push([department.id, department.name]);
+          departmentTable.push([department.id, department.name]); // Add department data to the table
         });
-        console.log(departmentTable.toString());
+        console.log(departmentTable.toString()); // Display the table in the console
         break;
 
       case 'View all roles':
-        const roles = await viewAllRoles();
+        const roles = await viewAllRoles(); // Fetch all roles from the database
         const roleTable = new Table({
           head: ['ID', 'Title', 'Salary', 'Department'],
-          colWidths: [5, 30, 15, 30] // Adjust the widths as needed
+          colWidths: [5, 30, 15, 30] // Define column widths
         });
         roles.forEach(role => {
-          roleTable.push([role.id, role.title, parseFloat(role.salary).toFixed(2), role.department]); // Exclude department_id
+          roleTable.push([role.id, role.title, parseFloat(role.salary).toFixed(2), role.department]); // Add role data to the table
         });
-        console.log(roleTable.toString());
+        console.log(roleTable.toString()); // Display the table in the console
         break;
 
       case 'View all employees':
-        clearConsole(); // Clear the console to hide previous output
-        displayBanner(); // Re-display the banner
-        const employees = await viewAllEmployees();
+        clearConsole(); // Clear the console before displaying data
+        displayBanner(); // Display the banner again after clearing
+        const employees = await viewAllEmployees(); // Fetch all employees from the database
         const employeeTable = new Table({
           head: ['ID', 'First Name', 'Last Name', 'Title', 'Department', 'Salary', 'Manager'],
-          colWidths: [6, 15, 15, 30, 20, 10, 20]
+          colWidths: [6, 15, 15, 30, 20, 10, 20] // Define column widths
         });
         employees.forEach(employee => {
           employeeTable.push([
@@ -73,28 +76,29 @@ const startPrompt = async () => {
             employee.department,
             employee.salary ? parseFloat(employee.salary).toFixed(2) : 'N/A',
             employee.manager || 'N/A'
-          ]);
+          ]); // Add employee data to the table
         });
-        console.log(employeeTable.toString());
+        console.log(employeeTable.toString()); // Display the table in the console
         break;
 
       case 'Add a department':
         const { departmentName } = await inquirer.prompt([
           { type: 'input', name: 'departmentName', message: 'Enter the department name:' }
-        ]);
-        await addDepartment(departmentName);
-        console.log('Department added.');
+        ]); // Prompt user for department name
+        await addDepartment(departmentName); // Add department to the database
+        console.log('Department added.'); // Confirmation message
         break;
 
       case 'Add a role':
-        await addRole();
-        console.log('Role added.');
+        await addRole(); // Call function to add a role
+        console.log('Role added.'); // Confirmation message
         break;
 
       case 'Add an employee':
-        const rolesList = await viewAllRoles();
-        const employeesList = await viewAllEmployees();
+        const rolesList = await viewAllRoles(); // Fetch all roles for selection
+        const employeesList = await viewAllEmployees(); // Fetch all employees for manager selection
 
+        // Prompt user for employee details
         const { firstName, lastName, roleId, managerId } = await inquirer.prompt([
           { type: 'input', name: 'firstName', message: 'Enter the employee’s first name:' },
           { type: 'input', name: 'lastName', message: 'Enter the employee’s last name:' },
@@ -102,30 +106,31 @@ const startPrompt = async () => {
             type: 'list',
             name: 'roleId',
             message: 'Select the role for this employee:',
-            choices: rolesList.map(role => ({ name: role.title, value: role.id }))
+            choices: rolesList.map(role => ({ name: role.title, value: role.id })) // Display roles as choices
           },
           {
             type: 'list',
             name: 'managerId',
             message: 'Select the manager for this employee (select None if there is no manager):',
             choices: [
-              { name: 'None', value: null },
+              { name: 'None', value: null }, // Option for no manager
               ...employeesList.map(employee => ({
                 name: `${employee.first_name} ${employee.last_name}`,
                 value: employee.id
-              }))
+              })) // Display employees as manager choices
             ]
           }
         ]);
 
-        await addEmployee(firstName, lastName, roleId, managerId);
-        console.log('Employee added.');
+        await addEmployee(firstName, lastName, roleId, managerId); // Add employee to the database
+        console.log('Employee added.'); // Confirmation message
         break;
 
       case 'Update an employee role':
-        const employeesForUpdate = await viewAllEmployees();
-        const rolesForUpdate = await viewAllRoles();
+        const employeesForUpdate = await viewAllEmployees(); // Fetch all employees for selection
+        const rolesForUpdate = await viewAllRoles(); // Fetch all roles for selection
 
+        // Prompt user for employee and new role details
         const { employeeIdForUpdate, newRoleIdForUpdate } = await inquirer.prompt([
           {
             type: 'list',
@@ -134,7 +139,7 @@ const startPrompt = async () => {
             choices: employeesForUpdate.map(employee => ({
               name: `${employee.first_name} ${employee.last_name}`,
               value: employee.id
-            }))
+            })) // Display employees as choices
           },
           {
             type: 'list',
@@ -143,23 +148,24 @@ const startPrompt = async () => {
             choices: rolesForUpdate.map(role => ({
               name: role.title,
               value: role.id
-            }))
+            })) // Display roles as choices
           }
         ]);
 
-        await updateEmployeeRole(employeeIdForUpdate, newRoleIdForUpdate);
-        console.log('Employee role updated.');
+        await updateEmployeeRole(employeeIdForUpdate, newRoleIdForUpdate); // Update employee role in the database
+        console.log('Employee role updated.'); // Confirmation message
         break;
 
       case 'Exit':
-        console.log('Exiting...');
-        continueApp = false;
+        console.log('Exiting...'); // Exit message
+        continueApp = false; // Set loop control variable to false to exit
         break;
 
       default:
-        console.log('Invalid action.');
+        console.log('Invalid action.'); // Error message for invalid action
     }
   }
 };
 
+// Start the application
 startPrompt();

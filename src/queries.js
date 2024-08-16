@@ -49,16 +49,16 @@ const addDepartment = async (name) => {
 // Function to add a role
 const addRole = async () => {
   try {
-    // Step 1: Retrieve all departments
+    // Retrieve all departments
     const departments = await pool.query('SELECT id, name FROM department');
 
-    // Step 2: Display the list of departments
+    // Display the list of departments
     if (departments.rows.length === 0) {
       console.log('No departments found. Please add a department first.');
       return;
     }
 
-    // Step 3: Prompt the user for role details and department selection
+    // Prompt the user for role details and department selection
     const { title, salary, department_id } = await inquirer.prompt([
       {
         type: 'input',
@@ -76,13 +76,13 @@ const addRole = async () => {
         name: 'department_id',
         message: 'Select the department for this role:',
         choices: departments.rows.map(dept => ({
-          name: dept.name,    // Display the department name
-          value: dept.id      // The actual department ID to be used in the query
+          name: dept.name,   
+          value: dept.id      
         }))
       }
     ]);
 
-    // Step 4: Insert the new role into the database
+    //Insert the new role into the database
     await pool.query('INSERT INTO role (title, salary, department_id) VALUES ($1, $2, $3)', [title, salary, department_id]);
     console.log('Role added successfully.');
 
