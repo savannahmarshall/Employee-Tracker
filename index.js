@@ -3,6 +3,11 @@ const Table = require('cli-table3');
 const { viewAllDepartments, viewAllRoles, viewAllEmployees, addDepartment, addRole, addEmployee, updateEmployeeRole } = require('./src/queries');
 const displayBanner = require('./src/displayBanner');
 
+// Function to clear the console
+const clearConsole = () => {
+  process.stdout.write('\x1Bc'); // ANSI escape code to clear the console
+};
+
 const startPrompt = async () => {
   displayBanner(); // Call displayBanner only once at the start
   let continueApp = true;
@@ -52,6 +57,8 @@ const startPrompt = async () => {
         break;
 
       case 'View all employees':
+        clearConsole(); // Clear the console to hide previous output
+        displayBanner(); // Re-display the banner
         const employees = await viewAllEmployees();
         const employeeTable = new Table({
           head: ['ID', 'First Name', 'Last Name', 'Title', 'Department', 'Salary', 'Manager'],
@@ -68,7 +75,6 @@ const startPrompt = async () => {
             employee.manager || 'N/A'
           ]);
         });
-        console.log("\n"); // Ensure there is a newline before the table to separate from the prompt
         console.log(employeeTable.toString());
         break;
 
