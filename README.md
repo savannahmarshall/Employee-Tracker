@@ -52,7 +52,7 @@ To use this application, follow these steps:
 
    * **Exit:** Selecting exit will close the application.
      
-**Please click [here]() to view a demo on how to use this application.**
+**Please click [here](https://drive.google.com/file/d/1H_jd5EEwlcLJe0dAYkGeopUe7c8gWTjW/view) to view a demo on how to use this application.**
 
 
 ![screenshot of application](https://github.com/savannahmarshall/Employee-Tracker/blob/main/assets/employee-tracker-screenshot.png)
