@@ -49,6 +49,8 @@ To use this application, follow these steps:
    * **Add an employee:** If the user selects "add an employee," they will be prompted to enter the employee's first name, last name, select a role from a dropdown list of saved roles, and select a manager from the dropdown list of saved employees.
      
    * **Update an employee role:** If the user wants to update an employee's role, they will be prompted to select the employee whose role they wish to update and select the new role for that employee from the list of saved roles.
+
+   * **Exit:** Selecting exit will close the application.
      
 **Please click [here]() to view a demo on how to use this application.**
 
